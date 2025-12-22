@@ -2,8 +2,9 @@ import jwt from "jsonwebtoken";
 import { WebSocketServer, WebSocket } from "ws";
 import { JWT_SECRET } from "@repo/backend-common/config";
 import { prismaClient } from "@repo/db/client";
+import { PORT } from "./config";
 
-const wss = new WebSocketServer({ port: 8085 });
+const wss = new WebSocketServer({ port: Number(PORT) });
 
 interface User {
   ws: WebSocket;
@@ -380,4 +381,4 @@ setInterval(() => {
   });
 }, 30000); // Every 30 seconds
 
-console.log("WebSocket server is running on ws://localhost:8080");
+console.log(`WebSocket server is running on ws://localhost:${PORT}`);

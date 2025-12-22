@@ -9,13 +9,14 @@ import { prismaClient } from "@repo/db/client";
 import { authMiddleware, optionalAuthMiddleware } from "./middleware";
 import cors from "cors";
 import { AuthService } from "./services/auth.service";
+import { FRONTEND_URL, PORT } from "./config";
 
 const app = express();
 app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -613,7 +614,6 @@ setInterval(() => {
   AuthService.cleanupExpiredSessions().catch(console.error);
 }, 60 * 60 * 1000);
 
-const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log(`HTTP backend is running on http://localhost:${PORT}`);
 });
