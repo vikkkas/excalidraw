@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { authAPI } from "@/lib/api";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
 
 export function AuthPage({ isSignin }: { isSignin: boolean }) {
   const router = useRouter();
@@ -32,6 +35,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
         localStorage.setItem("refreshToken", response.refreshToken);
         localStorage.setItem("user", JSON.stringify(response.user));
 
+        toast.success("Signed in successfully");
         // Redirect to canvas or rooms page
         router.push("/canvas");
       } else {
@@ -47,29 +51,35 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
         localStorage.setItem("refreshToken", response.refreshToken);
         localStorage.setItem("user", JSON.stringify(response.user));
 
+        toast.success("Account created successfully");
         // Redirect to canvas or rooms page
         router.push("/canvas");
       }
     } catch (err: any) {
       console.error("Auth error:", err);
-      setError(
-        err.response?.data?.message || 
-        err.message || 
-        "An error occurred. Please try again."
-      );
+      const errorMessage = err.response?.data?.message || err.message || "An error occurred. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md p-8 space-y-6">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+       {/* Background decoration */}
+       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10" />
+
+      <Card className="w-full max-w-md p-8 space-y-6 border-2 border-border/50 backdrop-blur-sm bg-card/80">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
+            <Pencil className="h-6 w-6 text-primary" />
+            <span className="text-2xl font-bold font-sketch">Sketch Sync</span>
+          </Link>
+          <h1 className="text-3xl font-bold font-sketch text-foreground">
             {isSignin ? "Welcome Back" : "Create Account"}
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-muted-foreground font-mono">
             {isSignin
               ? "Sign in to continue to your canvas"
               : "Sign up to start collaborating"}
@@ -81,7 +91,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-foreground mb-1 font-mono"
               >
                 Full Name
               </label>
@@ -91,7 +101,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required={!isSignin}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 bg-background border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition font-sans"
                 placeholder="John Doe"
               />
             </div>
@@ -100,7 +110,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1 font-mono"
             >
               Email
             </label>
@@ -110,7 +120,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-2 bg-background border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition font-sans"
               placeholder="you@example.com"
             />
           </div>
@@ -118,7 +128,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1 font-mono"
             >
               Password
             </label>
@@ -129,26 +139,26 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-2 bg-background border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition font-sans"
               placeholder="••••••••"
             />
             {!isSignin && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-muted-foreground font-mono">
                 Must be at least 6 characters
               </p>
             )}
           </div>
 
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive font-mono">{error}</p>
             </div>
           )}
 
           <Button
             type="submit"
             disabled={loading}
-            className="w-full h-11 text-base font-medium"
+            className="w-full h-11 text-lg font-sketch"
           >
             {loading
               ? "Please wait..."
@@ -158,16 +168,16 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
           </Button>
         </form>
 
-        <div className="text-center text-sm">
-          <span className="text-gray-600">
+        <div className="text-center text-sm font-mono">
+          <span className="text-muted-foreground">
             {isSignin ? "Don't have an account?" : "Already have an account?"}
           </span>{" "}
-          <a
+          <Link
             href={isSignin ? "/signup" : "/signin"}
-            className="text-blue-600 hover:text-blue-700 font-medium"
+            className="text-primary hover:underline font-medium"
           >
             {isSignin ? "Sign up" : "Sign in"}
-          </a>
+          </Link>
         </div>
       </Card>
     </div>

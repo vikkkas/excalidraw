@@ -239,7 +239,7 @@ app.post("/api/room", authMiddleware, async (req: Request, res: Response) => {
     // Create room with canvas
     const room = await prismaClient.room.create({
       data: {
-        slug: parsedData.data.name,
+        slug: parsedData.data.name.toLowerCase().replace(/ /g, "-"),
         name: parsedData.data.name,
         adminId: userId,
         isPublic: false,
@@ -425,6 +425,93 @@ app.get("/api/room/:roomId/members", authMiddleware, async (req: Request, res: R
     });
     res.json({ members });
   } catch (e) {
+    return res.status(500).json({ message: e instanceof Error ? e.message : "Error" });
+  }
+});
+
+// Remove room member
+app.delete("/api/room/:roomId/members/:userId", authMiddleware, async (req: Request, res: Response) => {
+  const roomId = parseInt(req.params.roomId!);
+  const userIdToRemove = req.params.userId;
+  const requesterId = req.userId!;
+
+  try {
+    const room = await prismaClient.room.findUnique({ where: { id: roomId } });
+    if (!room) return res.status(404).json({ message: "Room not found" });
+
+    // Only admin can remove others, or user can remove themselves (leave)
+    if (room.adminId !== requesterId && requesterId !== userIdToRemove) {
+      return res.status(403).json({ message: "Not authorized to remove this member" });
+    }
+
+    // Cannot remove the admin
+    if (room.adminId === userIdToRemove) {
+      return res.status(400).json({ message: "Cannot remove room admin" });
+    }
+
+    await prismaClient.roomMember.deleteMany({
+      where: { roomId, userId: userIdToRemove },
+    });
+
+    res.json({ message: "Member removed" });
+  } catch (e) {
+    console.error("Remove member error:", e);
+    return res.status(500).json({ message: e instanceof Error ? e.message : "Error" });
+  }
+});
+
+// Update room
+app.put("/api/room/:roomId", authMiddleware, async (req: Request, res: Response) => {
+  const roomId = parseInt(req.params.roomId!);
+  const { name, isPublic } = req.body;
+  const requesterId = req.userId!;
+
+  try {
+    const room = await prismaClient.room.findUnique({ where: { id: roomId } });
+    if (!room) return res.status(404).json({ message: "Room not found" });
+
+    if (room.adminId !== requesterId) {
+      return res.status(403).json({ message: "Only admin can update room" });
+    }
+
+    const updatedRoom = await prismaClient.room.update({
+      where: { id: roomId },
+      data: {
+        name: name !== undefined ? name : undefined,
+        isPublic: isPublic !== undefined ? isPublic : undefined,
+      },
+    });
+
+    res.json({ message: "Room updated", room: updatedRoom });
+  } catch (e) {
+    console.error("Update room error:", e);
+    return res.status(500).json({ message: e instanceof Error ? e.message : "Error" });
+  }
+});
+
+// Delete room
+app.delete("/api/room/:roomId", authMiddleware, async (req: Request, res: Response) => {
+  const roomId = parseInt(req.params.roomId!);
+  const requesterId = req.userId!;
+
+  try {
+    const room = await prismaClient.room.findUnique({ where: { id: roomId } });
+    if (!room) return res.status(404).json({ message: "Room not found" });
+
+    if (room.adminId !== requesterId) {
+      return res.status(403).json({ message: "Only admin can delete room" });
+    }
+
+    // Delete room (cascading deletes should handle members and canvas if configured, 
+    // but let's be safe and delete related data if needed, or rely on Prisma cascade)
+    // Assuming Prisma schema has onDelete: Cascade for relations
+    await prismaClient.room.delete({
+      where: { id: roomId },
+    });
+
+    res.json({ message: "Room deleted" });
+  } catch (e) {
+    console.error("Delete room error:", e);
     return res.status(500).json({ message: e instanceof Error ? e.message : "Error" });
   }
 });

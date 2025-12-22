@@ -122,6 +122,21 @@ export const roomAPI = {
     const response = await apiClient.get(`/api/room/${roomId}/members`);
     return response.data;
   },
+
+  removeMember: async (roomId: number, userId: string) => {
+    const response = await apiClient.delete(`/api/room/${roomId}/members/${userId}`);
+    return response.data;
+  },
+
+  update: async (roomId: number, data: { name?: string; isPublic?: boolean }) => {
+    const response = await apiClient.put(`/api/room/${roomId}`, data);
+    return response.data;
+  },
+
+  delete: async (roomId: number) => {
+    const response = await apiClient.delete(`/api/room/${roomId}`);
+    return response.data;
+  },
 };
 
 export const canvasAPI = {

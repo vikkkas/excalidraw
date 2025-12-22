@@ -6,6 +6,7 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 import { roomAPI, canvasAPI } from "@/lib/api";
 import { Share2, Users, Save } from "lucide-react";
 import { ShareModal } from "./ShareModal";
+import { toast } from "sonner";
 
 interface ExcalidrawCanvasProps {
   roomSlug: string;
@@ -154,6 +155,7 @@ export function ExcalidrawCanvas({ roomSlug }: ExcalidrawCanvasProps) {
         }
       } catch (error) {
         console.error("Error loading room:", error);
+        toast.error("Failed to load room data");
       } finally {
         setLoading(false);
       }
@@ -194,10 +196,10 @@ export function ExcalidrawCanvas({ roomSlug }: ExcalidrawCanvasProps) {
     try {
       await canvasAPI.save(room.id, elements, safeAppState);
       setLastSaved(new Date());
-      excalidrawAPI.setToast({ message: "Canvas saved!" });
+      toast.success("Canvas saved successfully");
     } catch (error) {
       console.error("Error saving canvas:", error);
-      excalidrawAPI.setToast({ message: "Error saving canvas" });
+      toast.error("Failed to save canvas");
     } finally {
       setSaving(false);
     }

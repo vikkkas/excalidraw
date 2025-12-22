@@ -1,128 +1,126 @@
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
-import { Pencil, Share2, Users2, Sparkles, Github, Download } from "lucide-react";
+import { Pencil, Cloud, Users, Github, ArrowRight, Zap } from "lucide-react";
 import Link from "next/link";
 
-function App() {
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <header className="relative overflow-hidden">
-        <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-foreground">
-              Collaborative Whiteboarding
-              <span className="text-primary block">Made Simple</span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              Create, collaborate, and share beautiful diagrams and sketches with our intuitive drawing tool. 
-              No sign-up required.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link href={"/signin"}>
-                <Button variant={"primary"} size="lg" className="h-12 px-6">
-                  Sign in
-                  <Pencil className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button variant="outline" size="lg" className="h-12 px-6">
-                  Sign up
-                </Button>
-              </Link>
-            </div>
+    <div className="min-h-screen bg-background font-sans selection:bg-primary/20">
+      {/* Navbar */}
+      <nav className="border-b border-border/40 backdrop-blur-sm sticky top-0 z-50 bg-background/80">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Pencil className="h-6 w-6 text-primary" />
+            <span className="text-2xl font-bold font-sketch">Sketch Sync</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/signin">
+              <Button variant="ghost" className="font-sketch text-lg">Sign In</Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="font-sketch text-lg">Start Sketching</Button>
+            </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
-      {/* Features Section */}
-      <section className="py-24 bg-muted/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
-            <Card className="p-6 border-2 hover:border-primary transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Share2 className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold">Real-time Collaboration</h3>
-              </div>
-              <p className="mt-4 text-muted-foreground">
-                Work together with your team in real-time. Share your drawings instantly with a simple link.
-              </p>
-            </Card>
-
-            <Card className="p-6 border-2 hover:border-primary transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Users2 className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold">Multiplayer Editing</h3>
-              </div>
-              <p className="mt-4 text-muted-foreground">
-                Multiple users can edit the same canvas simultaneously. See who's drawing what in real-time.
-              </p>
-            </Card>
-
-            <Card className="p-6 border-2 hover:border-primary transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Sparkles className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold">Smart Drawing</h3>
-              </div>
-              <p className="mt-4 text-muted-foreground">
-                Intelligent shape recognition and drawing assistance helps you create perfect diagrams.
-              </p>
-            </Card>
+      {/* Hero */}
+      <section className="relative pt-20 pb-32 overflow-hidden">
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-8">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            <span className="text-sm font-medium font-mono">v2.0 Now Live</span>
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-bold font-sketch mb-6 tracking-tight">
+            Sketch <span className="text-primary">Sync</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 font-sketch">
+            The software engineer's whiteboard. <br/>
+            <span className="text-foreground font-mono text-lg mt-2 block">
+              {"<CloudSave />"} • {"<CollabEdit />"} • {"<RealTime />"}
+            </span>
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/signin">
+              <Button size="lg" className="h-14 px-8 text-xl font-sketch rounded-2xl border-2 border-primary hover:scale-105 transition-transform">
+                Start Drawing Now <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Link href="https://github.com/vikkkas/excalidraw-clone" target="_blank">
+               <Button variant="outline" size="lg" className="h-14 px-8 text-xl font-sketch rounded-2xl border-2 hover:bg-muted">
+                <Github className="mr-2 h-5 w-5" /> Star on GitHub
+              </Button>
+            </Link>
           </div>
         </div>
+        
+        {/* Background decoration */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10" />
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-primary rounded-3xl p-8 sm:p-16">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl">
-                Ready to start creating?
-              </h2>
-              <p className="mx-auto mt-6 max-w-xl text-lg text-primary-foreground/80">
-                Join thousands of users who are already creating amazing diagrams and sketches.
-              </p>
-              <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Button size="lg" variant="secondary" className="h-12 px-6">
-                  Open Canvas
-                  <Pencil className="ml-2 h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="lg" className="h-12 px-6 bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                  View Gallery
-                </Button>
-              </div>
-            </div>
+      {/* Features */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold font-sketch mb-4">Why Sketch Sync?</h2>
+            <p className="text-muted-foreground font-mono">Built for speed, reliability, and collaboration.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <FeatureCard 
+              icon={<Cloud className="h-8 w-8 text-primary" />}
+              title="Cloud Save"
+              description="Your sketches are automatically saved to the cloud. Never lose a diagram again."
+              code="await sketch.save();"
+            />
+            <FeatureCard 
+              icon={<Users className="h-8 w-8 text-primary" />}
+              title="Collab Edit"
+              description="Real-time multiplayer editing. See cursors and changes instantly."
+              code="socket.emit('draw', data);"
+            />
+            <FeatureCard 
+              icon={<Zap className="h-8 w-8 text-primary" />}
+              title="Lightning Fast"
+              description="Optimized for performance. Handles complex diagrams with ease."
+              code="performance.now() < 16ms"
+            />
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t">
-        <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <p className="text-sm text-muted-foreground">
-              © 2024 Excalidraw Clone. All rights reserved.
-            </p>
-            <div className="flex space-x-6">
-              <a href="https://github.com" className="text-muted-foreground hover:text-primary">
-                <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary">
-                <Download className="h-5 w-5" />
-              </a>
-            </div>
+      <footer className="border-t py-12 bg-background">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-2">
+            <Pencil className="h-5 w-5 text-muted-foreground" />
+            <span className="font-sketch font-bold text-lg text-muted-foreground">Sketch Sync</span>
           </div>
+          <p className="text-sm text-muted-foreground font-mono">
+            © {new Date().getFullYear()} Sketch Sync. Open Source.
+          </p>
         </div>
       </footer>
     </div>
   );
 }
 
-export default App;
+function FeatureCard({ icon, title, description, code }: { icon: React.ReactNode, title: string, description: string, code: string }) {
+  return (
+    <Card className="p-6 border-2 border-border/50 hover:border-primary/50 transition-all hover:shadow-lg bg-card/50 backdrop-blur-sm group">
+      <div className="mb-4 p-3 bg-primary/10 w-fit rounded-xl group-hover:scale-110 transition-transform">
+        {icon}
+      </div>
+      <h3 className="text-2xl font-bold font-sketch mb-2">{title}</h3>
+      <p className="text-muted-foreground mb-4">{description}</p>
+      <div className="bg-muted p-3 rounded-lg font-mono text-xs text-muted-foreground overflow-hidden">
+        <code>{code}</code>
+      </div>
+    </Card>
+  );
+}

@@ -3,6 +3,10 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { Button } from "@repo/ui/button";
+import { Card } from "@repo/ui/card";
+import { Pencil, ArrowLeft, User } from "lucide-react";
+import Link from "next/link";
 
 // Dynamically import Excalidraw to avoid SSR issues
 const ExcalidrawCanvas = dynamic(
@@ -10,8 +14,8 @@ const ExcalidrawCanvas = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-lg">Loading canvas...</div>
+      <div className="h-full flex items-center justify-center bg-background">
+        <div className="text-lg font-sketch animate-pulse">Loading canvas...</div>
       </div>
     ),
   }
@@ -54,16 +58,16 @@ function DrawPageContent() {
 
   if (!roomSlug) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">No Room Specified</h1>
-          <p className="text-gray-600 mb-4">Please select a room from the dashboard</p>
-          <button
+          <h1 className="text-2xl font-bold font-sketch mb-4">No Room Specified</h1>
+          <p className="text-muted-foreground mb-4 font-mono">Please select a room from the dashboard</p>
+          <Button
             onClick={() => router.push("/canvas")}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="font-sketch"
           >
             Go to Dashboard
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -72,21 +76,22 @@ function DrawPageContent() {
   // Show name prompt for guests
   if (showNamePrompt) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
+      <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10" />
+
+        <Card className="w-full max-w-md p-8 space-y-6 border-2 border-border/50 backdrop-blur-sm bg-card/80">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Pencil className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Join Canvas Room</h1>
-            <p className="text-gray-600">Enter your name to start collaborating</p>
+            <h1 className="text-2xl font-bold font-sketch text-foreground mb-2">Join Canvas Room</h1>
+            <p className="text-muted-foreground font-mono text-sm">Enter your name to start collaborating</p>
           </div>
 
           <form onSubmit={handleGuestJoin} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2 font-mono">
                 Your Name
               </label>
               <input
@@ -95,60 +100,68 @@ function DrawPageContent() {
                 value={guestName}
                 onChange={(e) => setGuestName(e.target.value)}
                 placeholder="John Doe"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-lg"
+                className="w-full px-4 py-3 bg-background border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-lg font-sans"
                 autoFocus
                 required
               />
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={!guestName.trim()}
-              className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full h-12 text-lg font-sketch"
             >
               Join Room
-            </button>
+            </Button>
           </form>
 
-          <div className="mt-6 pt-6 border-t text-center">
-            <p className="text-sm text-gray-600 mb-3">
+          <div className="mt-6 pt-6 border-t border-border/50 text-center">
+            <p className="text-sm text-muted-foreground mb-3 font-mono">
               Already have an account?
             </p>
-            <button
+            <Button
+              variant="link"
               onClick={() => router.push("/signin")}
-              className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+              className="text-primary font-medium text-sm"
             >
               Sign in instead
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden">
+    <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="bg-white border-b px-4 py-2 flex items-center justify-between flex-shrink-0 z-10">
+      <header className="bg-card border-b border-border/40 px-4 py-2 flex items-center justify-between flex-shrink-0 z-10">
         <div className="flex items-center gap-4">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => router.push(user?.isGuest ? "/" : "/canvas")}
-            className="text-gray-600 hover:text-gray-900 text-sm"
+            className="text-muted-foreground hover:text-foreground font-mono text-xs sm:text-sm"
           >
-            ← {user?.isGuest ? "Home" : "Back to Dashboard"}
-          </button>
-          <div className="h-6 w-px bg-gray-300" />
-          <h1 className="text-base font-semibold">Room: {roomSlug}</h1>
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            {user?.isGuest ? "Home" : "Dashboard"}
+          </Button>
+          <div className="h-6 w-px bg-border" />
+          <h1 className="text-base font-bold font-sketch flex items-center gap-2">
+            <span className="text-muted-foreground font-mono font-normal text-xs uppercase tracking-wider">Room:</span>
+            {roomSlug}
+          </h1>
         </div>
         <div className="flex items-center gap-4">
           {user?.isGuest && (
-            <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
+            <span className="text-xs px-2 py-1 bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 rounded font-mono">
               Guest
             </span>
           )}
-          <span className="text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-foreground font-medium">
+            <User className="h-4 w-4 text-muted-foreground" />
             {user?.name}
-          </span>
+          </div>
         </div>
       </header>
 
@@ -163,8 +176,8 @@ function DrawPageContent() {
 export default function DrawPage() {
   return (
     <Suspense fallback={
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
+      <div className="h-screen flex items-center justify-center bg-background">
+        <div className="text-lg font-sketch animate-pulse">Loading...</div>
       </div>
     }>
       <DrawPageContent />

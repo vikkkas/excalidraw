@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, Copy, Check, Mail, Users } from "lucide-react";
 import { roomAPI } from "@/lib/api";
+import { toast } from "sonner";
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -32,12 +33,14 @@ export function ShareModal({ isOpen, onClose, roomSlug, roomId }: ShareModalProp
       setMembers(response.members || []);
     } catch (err) {
       console.error("Error loading members:", err);
+      toast.error("Failed to load members");
     }
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
+    toast.success("Link copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -51,11 +54,31 @@ export function ShareModal({ isOpen, onClose, roomSlug, roomId }: ShareModalProp
     try {
       await roomAPI.addMember(roomId, email, "editor");
       setEmail("");
+      toast.success("User invited successfully");
       await loadMembers();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to invite user");
+      const errorMessage = err.response?.data?.message || "Failed to invite user";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRemoveMember = async (userId: string) => {
+    // Optimistic update or just wait? Let's just do it.
+    // Ideally we'd show a custom confirmation modal, but for now we'll skip the native confirm
+    // as per user request to avoid "alert pop up". 
+    // We could add a "Undo" toast if we wanted to be fancy.
+    
+    try {
+      await roomAPI.removeMember(roomId, userId);
+      toast.success("Member removed");
+      await loadMembers();
+    } catch (err: any) {
+      console.error("Error removing member:", err);
+      const errorMessage = err.response?.data?.message || "Failed to remove member";
+      toast.error(errorMessage);
     }
   };
 
@@ -168,23 +191,34 @@ export function ShareModal({ isOpen, onClose, roomSlug, roomId }: ShareModalProp
                 {members.map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-muted rounded-lg border border-border/50 group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                      <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary text-sm font-bold font-sketch">
                         {member.user.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-foreground font-sans">
                           {member.user.name}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground font-mono">
                           {member.user.email}
                         </div>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-500 capitalize">
-                      {member.role}
+                    <div className="flex items-center gap-2">
+                      <div className="text-xs text-muted-foreground capitalize font-mono">
+                        {member.role}
+                      </div>
+                      {member.role !== 'admin' && (
+                         <button
+                           onClick={() => handleRemoveMember(member.user.id)}
+                           className="p-1 text-muted-foreground hover:text-destructive transition-all"
+                           title="Remove member"
+                         >
+                           <X className="w-4 h-4" />
+                         </button>
+                      )}
                     </div>
                   </div>
                 ))}
