@@ -613,7 +613,7 @@ setInterval(() => {
   AuthService.cleanupExpiredSessions().catch(console.error);
 }, 60 * 60 * 1000);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log(`HTTP backend is running on http://localhost:${PORT}`);
 });
