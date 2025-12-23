@@ -21,7 +21,8 @@ jobs:
               cd /root/sketchSync
               git pull origin main
               pnpm install
-              pnpm run build
+              pnpm run build --filter=http-backend
+              pnpm run build --filter=ws-backend
               pm2 restart sketchsync-be
               pm2 restart sketchsync-ws
             EOF
