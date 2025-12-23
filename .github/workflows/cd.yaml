@@ -18,7 +18,7 @@ jobs:
             ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_ed25519 root@128.199.25.103 << 'EOF'
               export NVM_DIR="$HOME/.nvm"
               [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-              cd /root/sketchsync
+              cd /root/sketchSync
               git pull origin main
               pnpm install
               pnpm run build
